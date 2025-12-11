@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 CineBook Pro | Professional Ticket Booking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="https://img.icons8.com/color/96/000000/movie-ticket.png">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-ticket-alt"></i>
+                <h1>CineBook<span class="gradient-text">Pro</span></h1>
+            </div>
+            <div class="nav-links">
+    <a href="javascript:void(0)" class="nav-link active" onclick="showSection('shows')">
+        <i class="fas fa-film"></i> Movies
+    </a>
+    <a href="javascript:void(0)" class="nav-link" onclick="showSection('booking')">
+        <i class="fas fa-chair"></i> Booking
+    </a>
+    <a href="javascript:void(0)" class="nav-link" onclick="showSection('admin')">
+        <i class="fas fa-cog"></i> Admin
+    </a>
+    <a href="javascript:void(0)" class="nav-link" onclick="showSection('analytics')">
+        <i class="fas fa-chart-bar"></i> Analytics
+    </a>
+</div>
+            <div class="nav-user">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <span class="username">Guest User</span>
+                    <span class="user-status">Online</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h2 class="hero-title">Book Your <span class="gradient-text">Movie Experience</span></h2>
+                <p class="hero-subtitle">Advanced seat selection with real-time concurrency control</p>
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-film"></i>
+                        <div>
+                            <h3 id="totalShows">0</h3>
+                            <p>Available Shows</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-chair"></i>
+                        <div>
+                            <h3 id="totalSeats">0</h3>
+                            <p>Total Seats</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h3 id="confirmedBookings">0</h3>
+                            <p>Confirmed Bookings</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-dollar-sign"></i>
+                        <div>
+                            <h3 id="totalRevenue">₹0</h3>
+                            <p>Revenue</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Shows Section -->
+        <section id="shows" class="section">
+            <div class="section-header">
+                <h2><i class="fas fa-fire"></i> Featured Movies</h2>
+                <div class="section-controls">
+                    <select id="categoryFilter" class="select-control">
+                        <option value="">All Categories</option>
+                        <option value="Action">Action</option>
+                        <option value="Adventure">Adventure</option>
+                        <option value="Sci-Fi">Sci-Fi</option>
+                    </select>
+                    <select id="sortFilter" class="select-control">
+                        <option value="rating">Top Rated</option>
+                        <option value="date">Upcoming</option>
+                        <option value="price">Price Low-High</option>
+                    </select>
+                </div>
+            </div>
+            <div id="showsGrid" class="shows-grid"></div>
+        </section>
+
+        <!-- Seat Selection Modal -->
+        <div id="seatModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-chair"></i> Select Your Seats</h3>
+                    <button class="close-modal" onclick="closeSeatModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="show-header">
+                        <img id="modalShowImage" src="" alt="">
+                        <div class="show-details">
+                            <h4 id="modalShowName"></h4>
+                            <div class="show-meta">
+                                <span><i class="far fa-clock"></i> <span id="modalShowTime"></span></span>
+                                <span><i class="fas fa-tag"></i> <span id="modalShowPrice"></span></span>
+                                <span><i class="fas fa-star"></i> <span id="modalShowRating"></span></span>
+                            </div>
+                            <p id="modalShowDesc"></p>
+                        </div>
+                    </div>
+
+                    <div class="seat-selection">
+                        <div class="screen">PREMIUM SCREEN</div>
+                        <div id="seatMap" class="seat-map"></div>
+                        
+                        <div class="seat-info">
+                            <div class="seat-legend">
+                                <div class="legend-item">
+                                    <div class="seat-sample available"></div>
+                                    <span>Available</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="seat-sample selected"></div>
+                                    <span>Selected</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="seat-sample booked"></div>
+                                    <span>Booked</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="seat-sample vip"></div>
+                                    <span>VIP</span>
+                                </div>
+                            </div>
+                            
+                            <div class="selected-summary">
+                                <h4>Your Selection</h4>
+                                <div class="selected-seats" id="selectedSeatsList"></div>
+                                <div class="selection-total">
+                                    <span>Total:</span>
+                                    <span id="selectionTotal">₹0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="booking-form">
+                            <h4><i class="fas fa-user"></i> Personal Details</h4>
+                            <div class="form-row">
+                                <input type="text" id="userName" placeholder="Full Name" class="form-input">
+                                <input type="email" id="userEmail" placeholder="Email Address" class="form-input">
+                            </div>
+                            <button class="btn-book" onclick="processBooking()">
+                                <i class="fas fa-lock"></i> Reserve Seats (2:00)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Panel -->
+        <section id="admin" class="section" style="display: none;">
+            <div class="section-header">
+                <h2><i class="fas fa-cog"></i> Admin Dashboard</h2>
+            </div>
+            <div class="admin-panel">
+                <div class="admin-card">
+                    <h3><i class="fas fa-plus-circle"></i> Add New Show</h3>
+                    <div class="admin-form">
+                        <input type="text" id="newShowName" placeholder="Show Name" class="admin-input">
+                        <textarea id="newShowDesc" placeholder="Description" class="admin-input"></textarea>
+                        <div class="form-row">
+                            <select id="newShowCategory" class="admin-input">
+                                <option value="Action">Action</option>
+                                <option value="Adventure">Adventure</option>
+                                <option value="Sci-Fi">Sci-Fi</option>
+                            </select>
+                            <input type="number" id="newShowPrice" placeholder="Price" class="admin-input">
+                        </div>
+                        <div class="form-row">
+                            <input type="datetime-local" id="newShowTime" class="admin-input">
+                            <input type="number" id="newShowSeats" placeholder="Total Seats" class="admin-input">
+                        </div>
+                        <button class="btn-admin" onclick="createShow()">
+                            <i class="fas fa-rocket"></i> Create Show
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <h3><i class="fas fa-chart-line"></i> System Statistics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-icon active">
+                                <i class="fas fa-ticket-alt"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4 id="liveBookings">0</h4>
+                                <p>Active Bookings</p>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon confirmed">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4 id="confirmedStats">0</h4>
+                                <p>Confirmed</p>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon failed">
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4 id="failedStats">0</h4>
+                                <p>Failed</p>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon revenue">
+                                <i class="fas fa-rupee-sign"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4 id="revenueStats">₹0</h4>
+                                <p>Revenue</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Booking Status -->
+        <div id="bookingStatus" class="booking-status">
+            <div class="status-content">
+                <div class="status-header">
+                    <h3><i class="fas fa-spinner fa-spin"></i> Processing Your Booking</h3>
+                    <div class="timer" id="bookingTimer">02:00</div>
+                </div>
+                <div class="status-body">
+                    <div class="progress-container">
+                        <div class="progress-bar" id="bookingProgress"></div>
+                    </div>
+                    <div class="status-message" id="statusMessage">Initializing secure booking...</div>
+                    <div class="status-actions">
+                        <button class="btn-confirm" onclick="confirmBooking()" id="confirmBtn">
+                            <i class="fas fa-check"></i> Confirm Payment
+                        </button>
+                        <button class="btn-cancel" onclick="cancelBooking()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmation Modal -->
+        <div id="confirmationModal" class="modal">
+            <div class="modal-content">
+                <div class="confirmation-header">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Booking Confirmed!</h3>
+                </div>
+                <div class="confirmation-body">
+                    <div class="ticket">
+                        <div class="ticket-header">
+                            <h4>E-TICKET</h4>
+                            <div class="ticket-qr" id="ticketQR">BOOKING-CODE</div>
+                        </div>
+                        <div class="ticket-details">
+                            <div class="ticket-info">
+                                <span>Show:</span>
+                                <span id="ticketShow">Movie Name</span>
+                            </div>
+                            <div class="ticket-info">
+                                <span>Seats:</span>
+                                <span id="ticketSeats">A1, A2</span>
+                            </div>
+                            <div class="ticket-info">
+                                <span>Time:</span>
+                                <span id="ticketTime">Date & Time</span>
+                            </div>
+                            <div class="ticket-info">
+                                <span>Total:</span>
+                                <span id="ticketTotal">₹0</span>
+                            </div>
+                        </div>
+                        <div class="ticket-footer">
+                            <p>Present this QR code at the entrance</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="confirmation-actions">
+                    <button class="btn-download" onclick="downloadTicket()">
+                        <i class="fas fa-download"></i> Download Ticket
+                    </button>
+                    <button class="btn-close" onclick="closeConfirmation()">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4><i class="fas fa-ticket-alt"></i> CineBook Pro</h4>
+                <p>Advanced ticket booking system with enterprise-grade concurrency control</p>
+            </div>
+            <div class="footer-section">
+                <h4>Technology Stack</h4>
+                <div class="tech-stack">
+                    <span class="tech-badge">Node.js</span>
+                    <span class="tech-badge">Express</span>
+                    <span class="tech-badge">Concurrency</span>
+                    <span class="tech-badge">Real-time</span>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4>System Status</h4>
+                <div class="status-indicator active">
+                    <div class="status-dot"></div>
+                    <span>All Systems Operational</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 CineBook Pro - Professional Ticket Booking System | Assessment Submission</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
